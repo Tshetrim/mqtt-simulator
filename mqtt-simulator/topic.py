@@ -75,6 +75,8 @@ class TopicAuto(Topic, threading.Thread):
             return [self.generate_payload(data["CHILDREN"]) for _ in range(initial_value)]
         elif data["TYPE"] == "object" and data.get("COLLECTION_TYPE") == "dictionary":
             return self.generate_payload(data["CHILDREN"])
+        elif data["TYPE"] == "timestamp" or data["NAME"] == "Timestamp":  # added this check
+            return datetime.datetime.now().isoformat()
 
     def generate_next_value(self, data, old_value):
         if "RESET_PROBABILITY" in data and random.random() < data["RESET_PROBABILITY"]:
@@ -98,7 +100,7 @@ class TopicAuto(Topic, threading.Thread):
             return [self.generate_payload(data["CHILDREN"], value) for value in old_value]
         elif data["TYPE"] == "object" and data.get("COLLECTION_TYPE") == "dictionary":
             return self.generate_payload(data["CHILDREN"], old_value)
-        elif data["TYPE"] == "timestamp":
+        elif data["TYPE"] == "timestamp" or data["NAME"] == "Timestamp":  # added this check
             return datetime.datetime.now().isoformat()
         else:
             # generating value for int or float
